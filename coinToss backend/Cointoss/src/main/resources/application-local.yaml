@@ -1,0 +1,48 @@
+spring:
+  application:
+    name: Cointoss
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/cointoss
+    username: postgres
+    password: amaka
+    driver-class-name: org.postgresql.Driver
+
+  flyway:
+    url: jdbc:postgresql://localhost:5432/cointoss
+    user: postgres
+    password: amaka
+    baseline-on-migrate: true
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  jwt:
+    secret: mySecretKey123456789012345678901234567890
+    accessTokenExpiration: 900 # 15 minutes
+    refreshTokenExpiration: 604800 # 7 days
+    cookieSecure: false
+
+server:
+  port: 8081
+
+quidax:
+  secretKey: dummy_quidax_key_for_local_dev
+  baseUrl: https://app.quidax.io/api/v1
+
+kora:
+  secretKey: sk_test_ZoNcXN8muoF5f6aBi42LA77F4eZo8danzpxB1o2T
+  baseUrl: https://api.korapay.com/merchant/api/v1
+
+logging:
+  level:
+    org.example.cointoss: DEBUG
+    org.springframework.security: DEBUG
+
+
+

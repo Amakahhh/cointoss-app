@@ -1,0 +1,27 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb
+    username: sa
+    password: 
+    driver-class-name: org.h2.Driver
+  
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+  
+  jwt:
+    secret: testSecretKey123456789012345678901234567890
+    accessTokenExpiration: 900
+    refreshTokenExpiration: 604800
+
+  flyway:
+    enabled: false # Disable flyway for tests
+
+quidax:
+  secretKey: test_quidax_key
+  baseUrl: https://app.quidax.io/api/v1
+
+kora:
+  secretKey: test_kora_key
+  baseUrl: https://api.korapay.com/merchant/api/v1

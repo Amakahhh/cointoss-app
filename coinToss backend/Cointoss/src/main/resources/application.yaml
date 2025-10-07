@@ -1,0 +1,38 @@
+spring:
+  application:
+    name: Cointoss
+  profiles:
+    active: local
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/cointoss
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+
+  flyway:
+    url: ${spring.datasource.url}
+    user: ${spring.datasource.username}
+    password: ${spring.datasource.password}
+    baseline-on-migrate: true
+
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  jwt:
+    secret: ${JWT_SECRET}
+    accessTokenExpiration: 900 # 15 minutes
+    refreshTokenExpiration: 604800 # 7 days
+
+server:
+  port: 8081
+
+quidax:
+  secretKey: ${QUIDAX_SECRET_KEY}
+  baseUrl: https://app.quidax.io/api/v1
+
+kora:
+    secretKey: ${KORA_SECRET_KEY}
+    baseUrl: https://api.korapay.com/merchant/api/v1
