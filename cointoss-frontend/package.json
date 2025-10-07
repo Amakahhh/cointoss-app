@@ -10,11 +10,13 @@
     "dev": "webpack serve --mode development"
   },
   "dependencies": {
+    "@stomp/stompjs": "^7.0.0",
     "lucide-react": "^0.544.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.8.1",
     "recharts": "^3.2.0",
+    "sockjs-client": "^1.6.1",
     "zustand": "^4.3.6"
   },
   "devDependencies": {
