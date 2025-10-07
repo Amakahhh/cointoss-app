@@ -1,5 +1,7 @@
 // API Service Layer for Cointoss Backend Integration
 // This file handles all communication with the backend API
+import SockJS from 'sockjs-client';
+import { Client } from '@stomp/stompjs';
 
 // Use proxy in development, direct URL in production (guarded for browser runtime)
 const getNodeEnv = () => {
@@ -347,86 +349,81 @@ export class WebSocketService {
   connect() {
     return new Promise((resolve, reject) => {
       try {
-        // Import SockJS and STOMP dynamically
-        import('sockjs-client').then((SockJS) => {
-          import('@stomp/stompjs').then(({ Client }) => {
-            // Create SockJS connection with CORS configuration
-            // Force direct backend websocket connection in development to avoid
-            // the webpack-dev-server proxy websocket errors seen on some systems
-            // (ERR_STREAM_WRITE_AFTER_END / ECONNREFUSED). Use absolute backend
-            // address when running locally.
-            const wsUrl = process.env.NODE_ENV === 'development'
-              ? 'http://localhost:8081/ws'
-              : `${API_BASE_URL}/ws`;
+        // Create SockJS connection with CORS configuration
+        // Force direct backend websocket connection in development to avoid
+        // the webpack-dev-server proxy websocket errors seen on some systems
+        // (ERR_STREAM_WRITE_AFTER_END / ECONNREFUSED). Use absolute backend
+        // address when running locally.
+        const wsUrl = process.env.NODE_ENV === 'development'
+          ? 'http://localhost:8081/ws'
+          : `${API_BASE_URL}/ws`;
 
-            const sockJS = new SockJS.default(wsUrl, null, {
-              // Add CORS headers for the connection
-              transports: ['websocket', 'xhr-streaming', 'xhr-polling'],
-              // Add authentication token if available
-              sessionId: () => {
-                const token = getAuthToken();
-                return token ? `Bearer ${token}` : '';
-              }
-            });
-
-            this.client = new Client({
-              webSocketFactory: () => sockJS,
-              debug: (str) => {
-                console.log('STOMP Debug:', str);
-              },
-              reconnectDelay: 5000,
-              // Add connection timeout
-              connectionTimeout: 10000,
-              // Add heartbeat configuration
-              heartbeatIncoming: 4000,
-              heartbeatOutgoing: 4000,
-            });
-
-            this.client.onConnect = (frame) => {
-              console.log('WebSocket Connected:', frame);
-              this.isConnected = true;
-              this.connectionAttempts = 0;
-              resolve(frame);
-            };
-
-            this.client.onStompError = (frame) => {
-              console.error('STOMP Error:', frame);
-              this.isConnected = false;
-              this.connectionAttempts++;
-              
-              // If we've exceeded max attempts, reject
-              if (this.connectionAttempts >= this.maxConnectionAttempts) {
-                console.error('Max WebSocket connection attempts reached');
-                reject(new Error('WebSocket connection failed after multiple attempts'));
-              } else {
-                // Try to reconnect after a delay
-                setTimeout(() => {
-                  console.log(`Attempting WebSocket reconnection (${this.connectionAttempts}/${this.maxConnectionAttempts})`);
-                  this.connect().catch(reject);
-                }, 5000);
-              }
-            };
-
-            this.client.onWebSocketClose = (event) => {
-              console.log('WebSocket Closed:', event);
-              this.isConnected = false;
-            };
-
-            this.client.onWebSocketError = (error) => {
-              console.error('WebSocket Error:', error);
-              this.isConnected = false;
-              this.connectionAttempts++;
-              
-              // Handle CORS errors specifically
-              if (error.message && error.message.includes('CORS')) {
-                console.warn('CORS error detected. WebSocket connection may not work in development.');
-                // Don't reject immediately for CORS errors, let it try other transports
-              }
-            };
-
-            this.client.activate();
-          });
+        const sockJS = new SockJS(wsUrl, null, {
+          // Add CORS headers for the connection
+          transports: ['websocket', 'xhr-streaming', 'xhr-polling'],
+          // Add authentication token if available
+          sessionId: () => {
+            const token = getAuthToken();
+            return token ? `Bearer ${token}` : '';
+          }
         });
+
+        this.client = new Client({
+          webSocketFactory: () => sockJS,
+          debug: (str) => {
+            console.log('STOMP Debug:', str);
+          },
+          reconnectDelay: 5000,
+          // Add connection timeout
+          connectionTimeout: 10000,
+          // Add heartbeat configuration
+          heartbeatIncoming: 4000,
+          heartbeatOutgoing: 4000,
+        });
+
+        this.client.onConnect = (frame) => {
+          console.log('WebSocket Connected:', frame);
+          this.isConnected = true;
+          this.connectionAttempts = 0;
+          resolve(frame);
+        };
+
+        this.client.onStompError = (frame) => {
+          console.error('STOMP Error:', frame);
+          this.isConnected = false;
+          this.connectionAttempts++;
+          
+          // If we've exceeded max attempts, reject
+          if (this.connectionAttempts >= this.maxConnectionAttempts) {
+            console.error('Max WebSocket connection attempts reached');
+            reject(new Error('WebSocket connection failed after multiple attempts'));
+          } else {
+            // Try to reconnect after a delay
+            setTimeout(() => {
+              console.log(`Attempting WebSocket reconnection (${this.connectionAttempts}/${this.maxConnectionAttempts})`);
+              this.connect().catch(reject);
+            }, 5000);
+          }
+        };
+
+        this.client.onWebSocketClose = (event) => {
+          console.log('WebSocket Closed:', event);
+          this.isConnected = false;
+        };
+
+        this.client.onWebSocketError = (error) => {
+          console.error('WebSocket Error:', error);
+          this.isConnected = false;
+          this.connectionAttempts++;
+          
+          // Handle CORS errors specifically
+          if (error.message && error.message.includes('CORS')) {
+            console.warn('CORS error detected. WebSocket connection may not work in development.');
+            // Don't reject immediately for CORS errors, let it try other transports
+          }
+        };
+
+        this.client.activate();
       } catch (error) {
         console.error('WebSocket Connection Error:', error);
         reject(error);
