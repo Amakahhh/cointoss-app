@@ -52,6 +52,11 @@ spring:
 server:
   port: 8080
   forward-headers-strategy: framework
+  
+# Override any system PORT property that Railway might set
+management:
+  server:
+    port: 8080
 
 cors:
   allowed-origins: 
