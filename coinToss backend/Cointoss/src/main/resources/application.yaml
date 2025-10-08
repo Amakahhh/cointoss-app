@@ -27,7 +27,7 @@ spring:
     refreshTokenExpiration: 604800 # 7 days
 
 server:
-  port: ${PORT:8081}
+  port: 8080
 
 quidax:
   secretKey: ${QUIDAX_SECRET_KEY}
