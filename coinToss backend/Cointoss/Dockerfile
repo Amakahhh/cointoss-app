@@ -22,4 +22,4 @@ RUN ./mvnw clean package -DskipTests
 
 # Run the application
 EXPOSE 8080
-CMD ["sh", "-c", "java -Dserver.port=${PORT:-8080} -jar target/Cointoss-0.0.1-SNAPSHOT.jar"]
+CMD ["java", "-jar", "target/Cointoss-0.0.1-SNAPSHOT.jar"]
