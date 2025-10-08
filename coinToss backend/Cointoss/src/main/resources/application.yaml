@@ -2,10 +2,10 @@ spring:
   application:
     name: Cointoss
   profiles:
-    active: local
+    active: ${SPRING_PROFILES_ACTIVE:production}
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/cointoss
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/cointoss}
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
@@ -27,7 +27,7 @@ spring:
     refreshTokenExpiration: 604800 # 7 days
 
 server:
-  port: 8081
+  port: ${PORT:8081}
 
 quidax:
   secretKey: ${QUIDAX_SECRET_KEY}

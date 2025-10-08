@@ -16,10 +16,10 @@ public class WebConfig {
             public void addCorsMappings(@NonNull CorsRegistry registry) {
                 registry.addMapping("/**") // Apply to all endpoints in the application
                         .allowedOrigins(
+                                "https://cointoss-app-6kbv.vercel.app",
                                 "https://coin-toss-tw57.vercel.app",
                                 "http://localhost:3000",
-                                "http://127.0.0.1:3000",
-                                "https://coin-toss-tw57.vercel.app"
+                                "http://127.0.0.1:3000"
                         ) // Allow local dev and deployed frontend
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")

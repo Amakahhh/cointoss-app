@@ -1,0 +1,13 @@
+{
+  "name": "cointoss-backend",
+  "description": "Bitcoin prediction betting platform backend",
+  "version": "1.0.0",
+  "main": "src/main/java/org/example/cointoss/CointossApplication.java",
+  "scripts": {
+    "build": "./mvnw clean package -DskipTests",
+    "start": "java -Dserver.port=$PORT -jar target/Cointoss-0.0.1-SNAPSHOT.jar"
+  },
+  "engines": {
+    "java": "17"
+  }
+}
