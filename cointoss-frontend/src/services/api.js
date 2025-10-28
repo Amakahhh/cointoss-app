@@ -17,7 +17,7 @@ const NODE_ENV_SAFE = getNodeEnv();
 // Prefer relative URLs when running on localhost so the webpack dev-server proxy handles requests.
 const API_BASE_URL = (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'))
   ? '' // Use relative URLs in development (webpack proxy will handle it)
-  : (NODE_ENV_SAFE === 'development' ? '' : 'https://cointoss-app-latest.onrender.com');
+  : (NODE_ENV_SAFE === 'development' ? '' : process.env.REACT_APP_BACKEND_URL || 'https://cointoss-production.up.railway.app');
 
 // Check if we're in production and should use mock data due to CORS issues
 const shouldUseMockDataInProduction = () => {
