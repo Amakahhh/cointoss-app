@@ -1,3 +1,4 @@
+# Force rebuild - updated 2024-12-19
 FROM eclipse-temurin:17-jdk-jammy
 
 WORKDIR /app
@@ -7,10 +8,10 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends maven \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy pom.xml and source from backend folder
-# Handle both root context and nested context scenarios
-COPY "coinToss backend/Cointoss/pom.xml" ./pom.xml
-COPY "coinToss backend/Cointoss/src" ./src
+# Copy all backend files - Docker will handle the path with spaces
+# Railway builds from repo root, so we need the full path
+COPY ["coinToss backend/Cointoss/pom.xml", "./pom.xml"]
+COPY ["coinToss backend/Cointoss/src", "./src"]
 
 # Pre-download dependencies for faster subsequent builds
 RUN mvn -B -q -DskipTests dependency:go-offline
