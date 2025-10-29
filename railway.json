@@ -1,0 +1,12 @@
+{
+  "build": {
+    "builder": "DOCKERFILE",
+    "dockerfilePath": "coinToss backend/Cointoss/Dockerfile",
+    "context": "."
+  },
+  "deploy": {
+    "healthcheckPath": "/actuator/health",
+    "restartPolicyType": "on_failure",
+    "restartPolicyMaxRetries": 10
+  }
+}

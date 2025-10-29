@@ -1,25 +1,26 @@
-FROM openjdk:17-jdk-slim
+FROM eclipse-temurin:17-jdk-jammy
 
 WORKDIR /app
 
-# Copy Maven wrapper and pom.xml first for better caching
-COPY mvnw .
-COPY mvnw.cmd .
-COPY .mvn .mvn
+# Copy only pom.xml first to leverage Docker layer caching
 COPY pom.xml .
 
-# Make mvnw executable
-RUN chmod +x ./mvnw
+# Install Maven (avoid relying on .mvn wrapper directory)
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends maven \
+    && rm -rf /var/lib/apt/lists/*
 
-# Download dependencies (this layer will be cached if pom.xml doesn't change)
-RUN ./mvnw dependency:go-offline -B
+# Pre-download dependencies for faster subsequent builds
+RUN mvn -B -q -DskipTests dependency:go-offline
 
-# Copy source code
+# Copy application source
 COPY src ./src
 
 # Build the application
-RUN ./mvnw clean package -DskipTests
+RUN mvn -B -DskipTests clean package
 
-# Run the application
+# Expose and honor PORT
 EXPOSE 8080
-CMD ["java", "-Dserver.port=8080", "-DPORT=8080", "-jar", "target/Cointoss-0.0.1-SNAPSHOT.jar"]
+ENV PORT=8080
+
+CMD ["java", "-Dserver.port=${PORT}", "-jar", "target/Cointoss-0.0.1-SNAPSHOT.jar"]
