@@ -25,8 +25,8 @@ spring:
   
   jwt:
     secret: ${JWT_SECRET}
-    accessTokenExpiration: 900 # 15 minutes
-    refreshTokenExpiration: 604800 # 7 days
+    accessTokenExpiration: 900
+    refreshTokenExpiration: 604800
   
   security:
     oauth2:
@@ -47,11 +47,6 @@ server:
   port: 8080
   forward-headers-strategy: framework
   
-# Override any system PORT property that Railway might set
-management:
-  server:
-    port: 8080
-
 cors:
   allowed-origins: 
     - ${FRONTEND_URL:http://localhost:3000}
@@ -59,10 +54,6 @@ cors:
   allowed-methods: GET,POST,PUT,DELETE,OPTIONS
   allowed-headers: "*"
   allow-credentials: true
-
-jwt:
-  secret: ${JWT_SECRET:your-super-secret-jwt-key-change-this-in-production}
-  expiration: 86400000
 
 logging:
   level:
@@ -72,6 +63,8 @@ logging:
     console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
 
 management:
+  server:
+    port: 8080
   endpoints:
     web:
       exposure:
