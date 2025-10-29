@@ -2,7 +2,7 @@
   "build": {
     "builder": "DOCKERFILE",
     "dockerfilePath": "coinToss backend/Cointoss/Dockerfile",
-    "context": "coinToss backend/Cointoss"
+    "context": "."
   },
   "deploy": {
     "healthcheckPath": "/actuator/health",
